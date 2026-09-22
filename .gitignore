@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Airflow
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/logs/
+logs/
+
+# dbt generated files
+customer_revenue_dbt/target/
+customer_revenue_dbt/logs/
+customer_revenue_dbt/dbt_packages/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.log
+
+# Airflow runtime files
+airflow/airflow.db-*
+airflow/simple_auth_manager_passwords.json.generated
+
+# Snowpipe temporary test files
+data/raw/*_test_*.csv
+data/raw/test_customers.csv
+data/raw/test2_customers.csv

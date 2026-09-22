@@ -1,0 +1,59 @@
+name: dbt CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: customer_revenue_dbt
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt
+        run: |
+          pip install --upgrade pip
+          pip install dbt-core==1.12.5 dbt-snowflake==1.12.1
+
+      - name: Create dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<EOF
+          customer_revenue_dbt:
+            target: ci
+            outputs:
+              ci:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ACCOUNTADMIN
+                database: CUSTOMER_REVENUE_DB
+                warehouse: CUSTOMER_REVENUE_WH
+                schema: STAGING
+                threads: 4
+          EOF
+
+      - name: dbt debug
+        run: dbt debug
+
+      - name: dbt parse
+        run: dbt parse
+
+      - name: dbt build
+        run: dbt build --exclude resource_type:snapshot

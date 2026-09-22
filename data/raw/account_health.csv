@@ -1,0 +1,9 @@
+health_id,customer_id,score_date,health_score,adoption_score,support_score,payment_score,renewal_risk,churn_risk_probability
+H001,C001,2026-09-18,62,68,55,90,medium,0.38
+H002,C002,2026-09-18,48,42,35,70,high,0.72
+H003,C003,2026-09-18,82,88,80,95,low,0.12
+H004,C004,2026-09-18,55,50,45,65,high,0.64
+H005,C005,2026-09-18,79,81,76,92,low,0.18
+H006,C006,2026-09-18,74,78,72,88,low,0.24
+H007,C007,2026-09-18,86,90,84,96,low,0.09
+H008,C008,2026-09-18,76,79,74,90,low,0.2

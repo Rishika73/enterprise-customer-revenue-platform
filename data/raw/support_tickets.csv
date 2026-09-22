@@ -1,0 +1,8 @@
+ticket_id,customer_id,created_at,closed_at,priority,status,category,assigned_team,resolution_hours,satisfaction_score
+INC-1001,C001,2026-09-18 10:00:00,,high,open,API,Platform Engineering,,
+INC-1002,C002,2026-09-18 12:00:00,,critical,open,Authentication,Identity Engineering,,
+INC-1003,C003,2026-09-15 09:00:00,2026-09-16 14:00:00,medium,closed,Reporting,Analytics Engineering,29,4.5
+INC-1004,C001,2026-09-10 08:00:00,2026-09-10 13:00:00,low,closed,Configuration,Customer Engineering,5,4.8
+INC-1005,C004,2026-09-18 08:00:00,,high,open,Integration,Integration Platform,,
+INC-1006,C002,2026-09-05 11:00:00,2026-09-07 15:00:00,high,closed,Authentication,Identity Engineering,52,3.2
+INC-1007,C004,2026-08-28 13:00:00,2026-08-30 11:00:00,medium,closed,Webhook,Integration Platform,46,3.6

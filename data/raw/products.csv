@@ -1,0 +1,5 @@
+product_id,product_name,product_category,plan_tier,monthly_list_price,active_flag
+P001,Analytics Cloud,Analytics,Enterprise,15000,True
+P002,Data Connect,Integration,Professional,8000,True
+P003,Identity Secure,Security,Enterprise,12000,True
+P004,Workflow Pro,Automation,Professional,6000,True

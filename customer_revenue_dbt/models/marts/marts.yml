@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: mart_customer_360
+    columns:
+      - name: customer_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: mart_revenue_metrics
+    columns:
+      - name: revenue_month
+        data_tests:
+          - not_null
+          - unique
+
+  - name: mart_churn_risk
+    columns:
+      - name: customer_id
+        data_tests:
+          - not_null
+          - unique
