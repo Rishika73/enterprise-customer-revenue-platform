@@ -12,6 +12,8 @@ The final reporting layer is available as an interactive Tableau dashboard.
 
 **[View the Customer Revenue & Risk Dashboard](https://public.tableau.com/app/profile/rishika.reddy.thumma/viz/CustomerRevenueRiskDashboard/Dashboard1)**
 
+![Customer Revenue & Risk Dashboard](docs/customer-revenue-risk-dashboard.png)
+
 The dashboard currently shows:
 
 | Metric | Value |
@@ -62,10 +64,10 @@ The overall flow of the project is:
 Source Data
     |
     v
-  AWS S3
+AWS S3
     |
     v
- Snowpipe
+Snowpipe
     |
     v
 Snowflake Raw Layer
@@ -74,7 +76,7 @@ Snowflake Raw Layer
 dbt Staging Models
     |
     v
- dbt Core Models
+dbt Core Models
     |
     v
 Analytics Marts
@@ -82,13 +84,13 @@ Analytics Marts
     +----------------------+
     |                      |
     v                      v
- Tableau             Snowflake Streams
- Dashboard                 |
+Tableau              Snowflake Streams
+Dashboard                  |
                            v
-                     Snowflake Tasks
+                      Snowflake Tasks
                            |
                            v
-                     Audit / CDC Data
+                      Audit / CDC Data
 ```
 
 Other parts of the project support this pipeline:
@@ -129,14 +131,14 @@ The basic ingestion flow is:
 
 ```text
 Source Data
-     |
-     v
-   AWS S3
-     |
-     v
- Snowpipe
-     |
-     v
+    |
+    v
+AWS S3
+    |
+    v
+Snowpipe
+    |
+    v
 Snowflake Raw Tables
 ```
 
@@ -269,7 +271,7 @@ A simplified flow looks like this:
 Existing Customer Record
           |
           v
- Customer Data Changes
+Customer Data Changes
           |
           v
 Previous Version Retained
@@ -545,6 +547,7 @@ enterprise-customer-revenue-platform/
 ├── data/
 │
 ├── docs/
+│   └── customer-revenue-risk-dashboard.png
 │
 ├── scripts/
 │
@@ -576,7 +579,7 @@ Contains data used for development and testing.
 
 ### `docs`
 
-Contains supporting project documentation.
+Contains supporting project documentation and the Tableau dashboard screenshot.
 
 ### `scripts`
 
