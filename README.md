@@ -1,4 +1,5 @@
 # Enterprise Customer Revenue & Risk Platform
+[![dbt CI](https://github.com/Rishika73/enterprise-customer-revenue-platform/actions/workflows/dbt-ci.yml/badge.svg)](https://github.com/Rishika73/enterprise-customer-revenue-platform/actions/workflows/dbt-ci.yml)
 
 An end-to-end customer revenue and risk analytics platform built with AWS S3, Snowflake, dbt, Apache Airflow, GitHub Actions, and Tableau.
 
