@@ -343,6 +343,7 @@ The dashboard also shows revenue distribution by region and segment, renewal-ris
 enterprise-customer-revenue-platform/
 ├── .github/
 │   └── workflows/
+│       └── dbt-ci.yml
 ├── airflow/
 ├── customer_revenue_dbt/
 ├── data/
@@ -354,8 +355,9 @@ enterprise-customer-revenue-platform/
 ├── tests/
 ├── .env.example
 ├── .gitignore
-├── README.md
-└── requirements.txt
+├── LICENSE
+├── requirements.txt
+└── README.md
 ```
 
 ---
