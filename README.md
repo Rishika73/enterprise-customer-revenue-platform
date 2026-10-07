@@ -1,23 +1,22 @@
 # Enterprise Customer Revenue & Risk Platform
 
-This project is an end-to-end customer revenue and risk analytics platform built using **AWS S3, Snowflake, dbt, Apache Airflow, GitHub Actions, and Tableau**.
+An end-to-end customer revenue and risk analytics platform built with AWS S3, Snowflake, dbt, Apache Airflow, GitHub Actions, and Tableau.
 
-I built it to work through the complete data flow instead of creating only a dashboard. The project starts with raw customer data, loads it into Snowflake, transforms and tests it with dbt, handles pipeline orchestration with Airflow, and uses the final analytics data for reporting in Tableau.
+The platform ingests source data into Snowflake, transforms it through layered dbt models, validates data quality, supports incremental change processing, and publishes analytics-ready datasets for customer revenue, churn risk, health score, and renewal analysis.
 
-The main focus is customer revenue, health score, churn risk, and renewal risk.
+---
 
 ## Live Dashboard
 
-The final reporting layer is available as an interactive Tableau dashboard.
-
-**[View the Customer Revenue & Risk Dashboard](https://public.tableau.com/app/profile/rishika.reddy.thumma/viz/CustomerRevenueRiskDashboard/Dashboard1)**
+**Customer Revenue & Risk Dashboard**  
+https://public.tableau.com/app/profile/rishika.reddy.thumma/viz/CustomerRevenueRiskDashboard/Dashboard1
 
 ![Customer Revenue & Risk Dashboard](docs/customer-revenue-risk-dashboard.png)
 
-The dashboard currently shows:
+Current dashboard metrics:
 
 | Metric | Value |
-| --- | ---: |
+|---|---:|
 | Total ARR | $2.91M |
 | Average Health Score | 70.25 |
 | High-Risk Customers | 2 |
@@ -25,40 +24,15 @@ The dashboard currently shows:
 
 The dashboard includes:
 
-- ARR by Region
-- ARR by Customer Segment
-- Customers by Renewal Risk
-- Churn Risk by Customer
-- Health Score by Customer
+- ARR by region
+- ARR by customer segment
+- Customers by renewal risk
+- Churn risk by customer
+- Health score by customer
 
-For the risk charts, I used the same colors across the dashboard:
-
-- Red = High risk
-- Orange = Medium risk
-- Green = Low risk
-
-For customer health scores, I used a red-to-green scale. Customers with lower health scores appear closer to red, while customers with stronger health scores appear green.
-
-## Project Goal
-
-The goal of this project was to build the full data pipeline behind a customer revenue and risk dashboard.
-
-I wanted the project to answer business questions such as:
-
-- What is the total recurring revenue?
-- Which region contributes the most ARR?
-- Which customer segment contributes the most revenue?
-- Which customers have the highest churn risk?
-- Which customers have lower health scores?
-- How many customers are currently high risk?
-- Which customers may need attention before renewal?
-- How can customer changes be tracked over time?
-
-Instead of doing all the analysis directly inside Tableau, I built the data pipeline first and kept the reporting layer separate.
+---
 
 ## Architecture
-
-The overall flow of the project is:
 
 ```text
 Source Data
@@ -70,16 +44,16 @@ AWS S3
 Snowpipe
     |
     v
-Snowflake Raw Layer
+Snowflake RAW
     |
     v
-dbt Staging Models
+dbt STAGING
     |
     v
-dbt Core Models
+dbt CORE
     |
     v
-Analytics Marts
+Analytics MARTS
     |
     +----------------------+
     |                      |
@@ -90,65 +64,42 @@ Dashboard                  |
                       Snowflake Tasks
                            |
                            v
-                      Audit / CDC Data
+                     Audit / CDC Data
 ```
 
-Other parts of the project support this pipeline:
+Supporting components:
 
 ```text
 Apache Airflow  -> Pipeline orchestration
 dbt             -> Transformation and testing
-GitHub Actions  -> CI/CD checks
-Snowflake       -> Storage, processing and security
-Tableau         -> Final reporting and visualization
+GitHub Actions  -> CI/CD validation
+Snowflake       -> Storage, processing, security
+Tableau         -> Analytics and reporting
 ```
 
-## Technology Stack
+---
+
+## Tech Stack
 
 | Area | Technology |
-| --- | --- |
+|---|---|
 | Cloud Storage | AWS S3 |
 | Data Warehouse | Snowflake |
 | Data Ingestion | Snowpipe |
-| Data Transformation | dbt |
-| Workflow Orchestration | Apache Airflow |
-| Change Data Processing | Snowflake Streams & Tasks |
+| Transformation | dbt |
+| Orchestration | Apache Airflow |
+| Incremental Processing | Snowflake Streams & Tasks |
 | Data Quality | dbt Tests |
 | CI/CD | GitHub Actions |
-| Security | Snowflake RBAC / Secure Views |
+| Security | Snowflake RBAC, Secure Views |
 | Visualization | Tableau |
 | Languages | SQL, Python |
 
-## Data Ingestion
+---
 
-The pipeline begins with source customer and revenue data.
+## Data Platform Design
 
-The files are stored in **AWS S3** and then loaded into **Snowflake**.
-
-I used Snowpipe for the ingestion process so new data can be loaded into the warehouse without manually rebuilding the complete pipeline every time.
-
-The basic ingestion flow is:
-
-```text
-Source Data
-    |
-    v
-AWS S3
-    |
-    v
-Snowpipe
-    |
-    v
-Snowflake Raw Tables
-```
-
-I keep the raw layer separate from transformed data. This gives me a clean copy of the source data before applying transformations or business rules.
-
-## Snowflake Data Warehouse
-
-Snowflake is the main data warehouse for the project.
-
-I organized the data into different logical layers instead of keeping raw and reporting data together.
+The warehouse is organized into four logical layers:
 
 ```text
 RAW
@@ -163,57 +114,63 @@ CORE
 MARTS
 ```
 
-Each layer has a different purpose.
+### RAW
 
-### Raw Layer
+Stores source data close to its original structure.
 
-The raw layer contains data loaded from the source.
+### STAGING
 
-I avoid putting major business logic here because I want this layer to stay close to the original source data.
+Handles:
 
-### Staging Layer
+- Column standardization
+- Data type conversion
+- Basic cleanup
+- Field preparation for downstream joins
 
-The staging layer prepares raw data for downstream models.
+### CORE
 
-This includes tasks such as:
-
-- Renaming columns
-- Standardizing values
-- Converting data types
-- Handling basic data cleanup
-- Preparing fields for downstream joins
-
-### Core Layer
-
-The core layer contains the main reusable business logic.
-
-This is where customer and revenue data can be combined and prepared for analytics.
-
-The core models support information related to:
+Contains reusable business logic around:
 
 - Customers
 - Revenue
 - ARR
 - Customer segments
-- Customer health
+- Health scores
 - Churn risk
 - Renewal risk
 
-### Mart Layer
+### MARTS
 
-The mart layer contains the final reporting-ready datasets.
+Contains analytics-ready datasets used by Tableau.
 
-These models are designed for analytics and are used by the Tableau dashboard.
+This separation keeps ingestion, transformation, business logic, and reporting concerns independent.
 
-Keeping these layers separate makes the pipeline easier to understand and troubleshoot.
+---
 
-## dbt Transformations
+## Data Ingestion
 
-I use **dbt** to manage the SQL transformation layer.
+Source files are stored in AWS S3 and loaded into Snowflake with Snowpipe.
 
-Instead of creating one large SQL query, I split the transformation logic into smaller models.
+```text
+Source Data
+    |
+    v
+AWS S3
+    |
+    v
+Snowpipe
+    |
+    v
+Snowflake RAW Tables
+```
 
-The general dbt flow is:
+The raw layer is kept separate so the original source data remains available before business transformations are applied.
+
+---
+
+## dbt Transformation Layer
+
+dbt manages the SQL transformation workflow:
 
 ```text
 Sources
@@ -228,15 +185,15 @@ Core Models
 Analytics Marts
 ```
 
-This makes individual transformations easier to test, reuse, and update.
+Breaking transformations into modular models makes the logic easier to test, reuse, and maintain.
 
-It also keeps the SQL logic in the repository, so changes can be tracked through Git.
+---
 
-## Data Quality Testing
+## Data Quality
 
-I added dbt tests to validate important fields and relationships.
+dbt tests validate important fields and model relationships.
 
-The project uses tests such as:
+Current checks include:
 
 ```text
 unique
@@ -245,27 +202,19 @@ accepted_values
 relationships
 ```
 
-For example, these tests can help detect:
+These tests help detect:
 
 - Duplicate customer IDs
 - Missing required values
 - Unexpected risk categories
-- Invalid relationships between models
-- Data issues introduced during transformation
+- Invalid relationships
+- Transformation issues
 
-Running tests as part of the pipeline gives me a way to catch data problems before the final data reaches the reporting layer.
+---
 
 ## Historical Customer Tracking
 
-Customer information can change over time.
-
-For example, a customer's segment, status, or other business attributes may not stay the same forever.
-
-To handle this, I included **Slowly Changing Dimension Type 2 (SCD Type 2)** concepts in the project.
-
-Instead of simply replacing the previous record, historical versions can be retained.
-
-A simplified flow looks like this:
+The project includes Slowly Changing Dimension Type 2 concepts for tracking customer changes over time.
 
 ```text
 Existing Customer Record
@@ -280,27 +229,19 @@ Previous Version Retained
 New Version Created
 ```
 
-This makes it possible to analyze both current and historical customer information.
+This allows both current-state and historical customer analysis.
 
-## Snowflake Streams
+---
 
-I used Snowflake Streams to work with changes made to warehouse tables.
+## Incremental Processing with Snowflake Streams & Tasks
 
-A Stream can track changes such as:
+Snowflake Streams capture changes such as:
 
 - Inserts
 - Updates
 - Deletes
 
-This is useful when only changed records need to be processed.
-
-Instead of repeatedly processing an entire table, downstream logic can work with the changes captured by the Stream.
-
-## Snowflake Tasks
-
-Snowflake Tasks are used to automate SQL processing.
-
-I combined Streams and Tasks to create a simple incremental processing flow:
+Snowflake Tasks then process those changes without requiring a full-table reload.
 
 ```text
 Source Table
@@ -315,17 +256,13 @@ Snowflake Task
 Audit / Downstream Table
 ```
 
-The Stream identifies changes and the Task processes those changes.
+This provides a simple incremental-processing pattern inside the warehouse.
 
-This was useful for understanding how change data can move through a warehouse without requiring a full reload every time.
+---
 
-## Apache Airflow
+## Airflow Orchestration
 
-I use **Apache Airflow** to organize and orchestrate the pipeline.
-
-The Airflow DAG controls the order in which pipeline steps run.
-
-A simplified workflow is:
+Apache Airflow coordinates the major pipeline stages.
 
 ```text
 Start
@@ -346,21 +283,13 @@ Build Analytics Models
 Reporting Data Ready
 ```
 
-Using Airflow makes dependencies between different steps clear.
+Airflow makes dependencies explicit and ensures downstream reporting models are only considered ready after transformation and validation steps complete successfully.
 
-For example, the reporting models should not be treated as ready until the required transformations and tests have completed.
+---
 
-## Security and Access Control
+## Security & Access Control
 
-I also included Snowflake security concepts in the project.
-
-The main idea is that not every user should automatically have access to every warehouse object.
-
-I worked with role-based access concepts so permissions can be separated based on what a user or workload needs.
-
-The project also includes secure-view concepts for exposing reporting data without requiring direct access to all of the underlying tables.
-
-The basic approach is:
+The project includes Snowflake role-based access control concepts and secure views.
 
 ```text
 Raw / Internal Data
@@ -375,15 +304,13 @@ Controlled Reporting View
 Analytics User
 ```
 
-This keeps the reporting layer separate from the internal warehouse structure.
+This keeps reporting access separate from internal warehouse objects.
 
-## CI/CD with GitHub Actions
+---
 
-I use GitHub Actions to add automated checks to the repository.
+## CI/CD
 
-When project changes are pushed, the workflow can validate the project instead of relying only on manual checks.
-
-The general process is:
+GitHub Actions provides automated repository checks on pushes and pull requests.
 
 ```text
 Code Change
@@ -404,272 +331,97 @@ GitHub Actions
 Validated Change
 ```
 
-This gives the project a repeatable process for checking changes before they become part of the main codebase.
+This adds repeatable validation before changes are merged.
 
-## Tableau Dashboard
+---
 
-The final step of the project is the Tableau reporting layer.
+## Dashboard Insights
 
-I created the **Customer Revenue & Risk Dashboard** to bring the main customer and revenue metrics together in one place.
+The Tableau reporting layer focuses on customer revenue and risk.
 
-**[Open the live Tableau dashboard](https://public.tableau.com/app/profile/rishika.reddy.thumma/viz/CustomerRevenueRiskDashboard/Dashboard1)**
+### ARR
 
-### Total ARR
+Total Annual Recurring Revenue:
 
-The current dataset contains:
+```text
+$2.91M
+```
 
-**$2.91M Total ARR**
+### Customer Health
 
-This gives a quick view of the annual recurring revenue represented in the dataset.
+Average health score:
 
-### Average Health Score
-
-The current average customer health score is:
-
-**70.25**
-
-This gives an overall view of customer health across the dataset.
+```text
+70.25
+```
 
 ### High-Risk Customers
 
-There are currently:
-
-**2 High-Risk Customers**
-
-This KPI makes it easy to see how many customers may need closer attention.
-
-### Average Churn Risk
-
-The current average churn risk is:
-
-**32.13%**
-
-This gives a portfolio-level view of churn risk.
-
-## ARR by Region
-
-The ARR by Region chart compares recurring revenue across:
-
-- East
-- Central
-- West
-- South
-
-This makes it easy to see how revenue is distributed geographically.
-
-In the current dataset, the East region contributes the highest ARR.
-
-## ARR by Segment
-
-The dashboard also compares ARR across customer segments:
-
-- Enterprise
-- Mid-Market
-- SMB
-
-This shows how recurring revenue is distributed across different customer groups.
-
-The current data has a large portion of ARR coming from Enterprise customers.
-
-## Customers by Renewal Risk
-
-Customers are grouped into three renewal-risk categories.
-
-| Renewal Risk | Customers |
-| --- | ---: |
-| High | 2 |
-| Medium | 1 |
-| Low | 5 |
-
-I used consistent colors for these categories throughout the dashboard:
+Current high-risk customers:
 
 ```text
-High    -> Red
-Medium  -> Orange
-Low     -> Green
+2
 ```
 
-This makes the risk level easier to understand without having to read every value individually.
+### Churn Risk
 
-## Churn Risk by Customer
-
-The Churn Risk by Customer chart ranks individual customers based on their churn-risk probability.
-
-Higher-risk customers appear at the top of the chart.
-
-The same risk colors are used here:
+Average churn risk:
 
 ```text
-High Risk    -> Red
-Medium Risk  -> Orange
-Low Risk     -> Green
+32.13%
 ```
 
-This makes it easy to identify the customers with the highest churn probability.
+The dashboard also shows revenue distribution by region and segment, renewal-risk categories, churn-risk ranking, and customer-level health scores.
 
-## Health Score by Customer
-
-The Health Score by Customer chart shows the relative health of each customer.
-
-The current health scores are:
-
-| Customer | Health Score |
-| --- | ---: |
-| C007 | 86 |
-| C003 | 82 |
-| C005 | 79 |
-| C008 | 76 |
-| C006 | 74 |
-| C001 | 62 |
-| C004 | 55 |
-| C002 | 48 |
-
-Instead of using the same color for every bar, I used a red-to-green scale.
-
-Lower scores move toward red, middle scores move through orange/yellow, and higher scores move toward green.
-
-This makes weaker and stronger customer health scores easier to identify visually.
+---
 
 ## Repository Structure
 
-The repository is organized by the main parts of the project.
-
 ```text
 enterprise-customer-revenue-platform/
-|
 ├── .github/
 │   └── workflows/
-│
 ├── airflow/
-│
 ├── customer_revenue_dbt/
-│
 ├── data/
-│
 ├── docs/
 │   └── customer-revenue-risk-dashboard.png
-│
 ├── scripts/
-│
 ├── snowflake/
-│
 ├── tests/
-│
 ├── .env.example
 ├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
 
-### `.github/workflows`
+---
 
-Contains GitHub Actions workflow files used for CI/CD checks.
+## Engineering Highlights
 
-### `airflow`
+This project demonstrates:
 
-Contains the Airflow DAG and orchestration-related code.
+- Cloud data ingestion with AWS S3 and Snowpipe
+- Layered Snowflake warehouse design
+- Modular dbt transformation models
+- Automated data-quality testing
+- SCD Type 2 concepts
+- Incremental processing with Streams and Tasks
+- Airflow orchestration
+- GitHub Actions CI/CD
+- Snowflake RBAC and secure views
+- Business-facing Tableau analytics
 
-### `customer_revenue_dbt`
-
-Contains the dbt project, including transformation models and related configuration.
-
-### `data`
-
-Contains data used for development and testing.
-
-### `docs`
-
-Contains supporting project documentation and the Tableau dashboard screenshot.
-
-### `scripts`
-
-Contains supporting scripts used by the project.
-
-### `snowflake`
-
-Contains Snowflake SQL used for warehouse setup, ingestion, Streams, Tasks, security, and related objects.
-
-### `tests`
-
-Contains additional project-level tests.
-
-## Main Metrics
-
-The project focuses on a few customer and revenue metrics.
-
-### ARR
-
-Annual Recurring Revenue is used to understand the recurring revenue represented by each customer and across the overall portfolio.
-
-### Health Score
-
-Health Score provides a simple way to compare the current health of customers.
-
-### Churn Risk Probability
-
-Churn Risk Probability represents the estimated churn risk associated with each customer.
-
-### Renewal Risk
-
-Renewal Risk converts customer risk into easier business categories:
-
-```text
-High
-Medium
-Low
-```
-
-These metrics are used together rather than looking at revenue or risk separately.
-
-For example, a customer can have meaningful ARR while also having a high churn probability. Looking at both makes the data more useful for customer and revenue analysis.
-
-## What I Learned
-
-The most useful part of this project was connecting the different pieces into one complete workflow.
-
-Working on the project gave me hands-on experience with:
-
-- Loading data from cloud storage into Snowflake
-- Organizing warehouse data into different layers
-- Building modular SQL transformations with dbt
-- Adding automated data-quality tests
-- Working with historical customer data
-- Using Streams and Tasks for incremental processing
-- Orchestrating pipeline steps with Airflow
-- Adding CI/CD checks with GitHub Actions
-- Working with Snowflake access-control concepts
-- Building a business-facing dashboard in Tableau
-
-It also showed me why it is useful to keep ingestion, transformation, testing, and reporting separate.
-
-If something changes in the source data or business logic, having clear layers makes it much easier to find where the change needs to happen.
+---
 
 ## Future Improvements
 
-There are several things I can extend from here.
-
-Some of the next improvements I would like to work on are:
-
-- Automated Tableau data refresh
+- Automated Tableau refresh
 - Pipeline monitoring and alerting
-- More dbt data-quality tests
+- Additional dbt tests
 - Revenue forecasting
-- Customer Lifetime Value analysis
+- Customer lifetime value analysis
 - Predictive churn modeling
-- Additional customer behavior metrics
-- Data observability checks
-- More automated infrastructure setup
-- Cost and warehouse usage monitoring
-
-## Dashboard Link
-
-The published dashboard can be viewed here:
-
-**[Customer Revenue & Risk Dashboard - Tableau Public](https://public.tableau.com/app/profile/rishika.reddy.thumma/viz/CustomerRevenueRiskDashboard/Dashboard1)**
-
-## Author
-
-**Rishika Reddy Thumma**
-
-MS Computer Science  
-Data Engineering | Analytics Engineering | Cloud Data Platforms
+- Data observability
+- Infrastructure automation
+- Snowflake cost monitoring
