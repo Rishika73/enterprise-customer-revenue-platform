@@ -78,6 +78,7 @@ Tableau         -> Analytics and reporting
 ```
 
 ---
+![Enterprise Customer Revenue & Risk Platform Architecture](docs/customer-revenue-risk-architecture.png)
 
 ## Tech Stack
 
