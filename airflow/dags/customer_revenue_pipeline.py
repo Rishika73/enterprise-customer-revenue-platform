@@ -1,10 +1,18 @@
 from datetime import datetime
+import os
+from pathlib import Path
 
 from airflow import DAG
 from airflow.providers.standard.operators.bash import BashOperator
 
 
-DBT_PROJECT_DIR = "/Users/rishikareddythumma/Documents/enterprise-customer-revenue-platform/customer_revenue_dbt"
+PROJECT_ROOT = Path(
+    os.getenv("PROJECT_ROOT", Path(__file__).resolve().parents[2])
+)
+
+DBT_PROJECT_DIR = Path(
+    os.getenv("DBT_PROJECT_DIR", PROJECT_ROOT / "customer_revenue_dbt")
+)
 
 
 with DAG(
@@ -18,12 +26,12 @@ with DAG(
 
     dbt_build = BashOperator(
         task_id="dbt_build",
-        bash_command=f"cd {DBT_PROJECT_DIR} && dbt build --exclude resource_type:snapshot",
+        bash_command=f'cd "{DBT_PROJECT_DIR}" && dbt build --exclude resource_type:snapshot',
     )
 
     dbt_snapshot = BashOperator(
         task_id="dbt_snapshot",
-        bash_command=f"cd {DBT_PROJECT_DIR} && dbt snapshot --select customer_snapshot",
+        bash_command=f'cd "{DBT_PROJECT_DIR}" && dbt snapshot --select customer_snapshot',
     )
 
     dbt_build >> dbt_snapshot
