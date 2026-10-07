@@ -1,0 +1,6 @@
+dbt-core==1.12.5
+dbt-snowflake==1.12.1
+apache-airflow==3.0.6
+apache-airflow-providers-standard
+snowflake-connector-python
+python-dotenv
