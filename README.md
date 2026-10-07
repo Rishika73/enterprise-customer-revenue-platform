@@ -34,51 +34,11 @@ The dashboard includes:
 
 ## Architecture
 
-```text
-Source Data
-    |
-    v
-AWS S3
-    |
-    v
-Snowpipe
-    |
-    v
-Snowflake RAW
-    |
-    v
-dbt STAGING
-    |
-    v
-dbt CORE
-    |
-    v
-Analytics MARTS
-    |
-    +----------------------+
-    |                      |
-    v                      v
-Tableau              Snowflake Streams
-Dashboard                  |
-                           v
-                      Snowflake Tasks
-                           |
-                           v
-                     Audit / CDC Data
-```
+![Enterprise Customer Revenue & Risk Platform Architecture](docs/customer-revenue-risk-architecture.png)
 
-Supporting components:
-
-```text
-Apache Airflow  -> Pipeline orchestration
-dbt             -> Transformation and testing
-GitHub Actions  -> CI/CD validation
-Snowflake       -> Storage, processing, security
-Tableau         -> Analytics and reporting
-```
+The platform ingests source data through AWS S3 and Snowpipe, transforms it with dbt, organizes it into layered Snowflake models, processes incremental changes with Streams and Tasks, and publishes analytics-ready data to Tableau.
 
 ---
-![Enterprise Customer Revenue & Risk Platform Architecture](docs/customer-revenue-risk-architecture.png)
 
 ## Tech Stack
 
@@ -386,7 +346,8 @@ enterprise-customer-revenue-platform/
 ├── customer_revenue_dbt/
 ├── data/
 ├── docs/
-│   └── customer-revenue-risk-dashboard.png
+│   ├── customer-revenue-risk-dashboard.png
+│   └── customer-revenue-risk-architecture.png
 ├── scripts/
 ├── snowflake/
 ├── tests/
