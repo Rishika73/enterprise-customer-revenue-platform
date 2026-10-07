@@ -30,6 +30,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Validate raw data
+        working-directory: ${{ github.workspace }}
+        run: |
+          python tests/validate_raw_data.py
+
       - name: Install dbt
         run: |
           pip install --upgrade pip
