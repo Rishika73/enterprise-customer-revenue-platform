@@ -390,3 +390,11 @@ This project demonstrates:
 - Data observability
 - Infrastructure automation
 - Snowflake cost monitoring
+
+## Trade-offs
+
+- The warehouse is split into RAW, STAGING, CORE, and MARTS layers. This keeps ingestion, transformation, business logic, and reporting concerns independent, at the cost of extra transformation stages and storage at each layer.
+- Snowpipe plus Snowflake Streams and Tasks give incremental processing without full-table reloads, but this is micro-batch ingestion rather than true real-time streaming.
+- SCD Type 2 history tracking allows both current-state and historical customer analysis, at the cost of more complex change-handling logic and growing history storage.
+- Building on Snowflake and other managed services removes infrastructure to operate, but couples the platform to the warehouse and its compute pricing; Snowflake cost monitoring is listed in the README as future work.
+- Tableau reporting is currently a manually refreshed dashboard; automated refresh, pipeline monitoring and alerting, and data observability are listed as future improvements needed before this runs unattended.
